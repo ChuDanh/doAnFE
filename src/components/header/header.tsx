@@ -27,7 +27,7 @@ export const Header = () => {
       });
       return localStorage.setItem('data', JSON.stringify(response.data)); // Thông tin user
     } catch (error) {
-      console.error('Error fetching user info:', error);
+      console.error('Error fetching user info: ', error);
       throw error;
     }
   };
@@ -36,7 +36,7 @@ export const Header = () => {
     try {
       await fetchUserInfo(accessToken);
     } catch (error) {
-      console.error('Error fetching user info:', error);
+      console.error('Error fetching user info: ', error);
     }
   };
 
