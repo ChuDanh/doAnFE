@@ -11,11 +11,14 @@ import {
   Typography,
 } from '@mui/material';
 import Box from '@mui/material/Box';
-import Iconify from '../../shared/components/iconify';
-import { FieldTitle } from '../../shared/components/field-title/field-title.tsx';
+import Iconify from '../../../shared/components/iconify';
+import { FieldTitle } from '../../../shared/components/field-title/field-title.tsx';
 import { FormProvider, useForm } from 'react-hook-form';
 import axios from 'axios';
 import { useEffect, useMemo } from 'react';
+import { useLoginValidation } from './validation.ts';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { useSnackbar } from 'notistack';
 
 type Props = {
   open: boolean;
@@ -30,6 +33,8 @@ type LoginProps = {
 };
 
 export const LoginDialog = ({ open, onClose, onSwitchToRegister, onLoggedIn }: Props) => {
+  const { enqueueSnackbar } = useSnackbar();
+
   const defaultValues = useMemo(
     () => ({
       username: '',
@@ -38,20 +43,29 @@ export const LoginDialog = ({ open, onClose, onSwitchToRegister, onLoggedIn }: P
     []
   );
 
+  const { schema } = useLoginValidation();
+
   const methods = useForm<LoginProps>({
     defaultValues,
+    resolver: yupResolver(schema),
   });
 
-  const { register, handleSubmit, reset } = methods;
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = methods;
 
   const onSubmit = handleSubmit(async (data: any) => {
     try {
       const logApi = await axios.post(`http://localhost:3001/v1/auth/login`, data);
       localStorage.setItem('accessToken', logApi.data.accessToken);
       onLoggedIn(logApi.data.accessToken);
+      enqueueSnackbar('Đăng nhập thành công', { variant: 'success' });
       onClose();
-    } catch (error) {
-      console.log(error);
+    } catch (error: any) {
+      enqueueSnackbar(error.response.data.message, { variant: 'error' });
     }
   });
 
@@ -75,7 +89,7 @@ export const LoginDialog = ({ open, onClose, onSwitchToRegister, onLoggedIn }: P
       <DialogTitle sx={{ pb: 1 }} textAlign="center">
         <img src="./logo.png" height={60} style={{ borderRadius: 10 }} />
         <Typography fontWeight={600} fontSize={20}>
-          Login
+          Đăng nhập
         </Typography>
       </DialogTitle>
       <DialogContent sx={{ mt: 2, mb: 3, mx: 3 }}>
@@ -83,23 +97,27 @@ export const LoginDialog = ({ open, onClose, onSwitchToRegister, onLoggedIn }: P
           <form onSubmit={onSubmit}>
             <Grid container>
               <Grid size={12}>
-                <FieldTitle title="User Name" required />
+                <FieldTitle title="Tên đăng nhập" required />
                 <TextField
                   variant="outlined"
                   {...register('username', { required: true, onChange: (e) => console.log(e) })}
                   fullWidth
                   sx={{ mb: 2 }}
                   size="small"
+                  error={!!errors.username}
+                  helperText={errors.username?.message}
                 />
               </Grid>
               <Grid size={12}>
-                <FieldTitle title="Password" required />
+                <FieldTitle title="Mật khẩu" required />
                 <TextField
                   type="password"
                   variant="outlined"
                   {...register('password')}
                   fullWidth
                   size="small"
+                  error={!!errors.password}
+                  helperText={errors.password?.message}
                 />
               </Grid>
             </Grid>
@@ -112,15 +130,15 @@ export const LoginDialog = ({ open, onClose, onSwitchToRegister, onLoggedIn }: P
               sx={{ my: 2 }}
             >
               <Typography component="span" fontSize={12}>
-                Don't have account?
+                Chưa có tài khoản?
               </Typography>
               <Link color="warning" sx={{ cursor: 'pointer' }} onClick={() => onSwitchToRegister()}>
-                Sign up
+                Đăng ký
               </Link>
             </Stack>
             <Box sx={{ textAlign: 'center', width: '100%' }}>
               <Button variant="contained" color="warning" type="submit">
-                Login
+                Đăng nhập
               </Button>
             </Box>
           </form>

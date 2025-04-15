@@ -1,8 +1,8 @@
-import { useData } from '../context/DataContext';
+import { useData } from '../../context/DataContext.tsx';
 
 export default function Home() {
   const { data, count } = useData();
-  
+
   return (
     <div>
       <h1>{data}</h1>

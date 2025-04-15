@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import { DataContext } from '../context/DataContext';
-import Home from '../pages/Home';
-import Dashboard from '../pages/Dashboard';
+import Home from './pages/Home';
+import Dashboard from './pages/Dashboard';
 
 export default function App() {
   const [userData, setUserData] = useState('');
