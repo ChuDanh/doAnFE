@@ -11,23 +11,69 @@ import {
 } from '@mui/material';
 import { LoginDialog } from '../login/login-dialog.tsx';
 import { RegisterDialog } from '../register/register-dialog.tsx';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import axios from 'axios';
 import Iconify from '../../../shared/components/iconify';
 import { Search } from '../search/search.tsx';
+import { useSnackbar } from 'notistack';
+import { userData } from '../../../shared/ultils/user.ts';
+
+type UserProps = {
+  full_name: string;
+  username: string;
+  email: string;
+  phone_number: string;
+  address: string;
+  role: string;
+  total_courses: string;
+  total_prices: string;
+};
 
 export const Header = () => {
+  const { enqueueSnackbar } = useSnackbar();
+
   const [isLoginOpen, setLoginOpen] = useState(false);
   const [isRegisterOpen, setRegisterOpen] = useState(false);
 
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const open = Boolean(anchorEl);
 
-  const handleClickPopver = (event: React.MouseEvent<HTMLElement>) => {
+  const [formattedData, setFormattedData] = useState<UserProps>();
+
+  const fetchUserInfo = async (accessToken: string) => {
+    try {
+      const response = await axios.get('http://localhost:3001/v1/users/profile', {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      return localStorage.setItem('data', JSON.stringify(response.data)); // Thông tin user
+    } catch (error: any) {
+      enqueueSnackbar(error.data.message, { variant: 'error' });
+      throw error;
+    }
+  };
+
+  const updateFormattedData = () => {
+    if (userData) {
+      setFormattedData(JSON.parse(userData));
+    }
+  };
+
+  const handleLoggedIn = async (accessToken: string) => {
+    try {
+      await fetchUserInfo(accessToken);
+      updateFormattedData();
+    } catch (error) {
+      console.error('Error fetching user info:', error);
+    }
+  };
+
+  const handleClickPopover = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
 
-  const handleClosePopver = () => {
+  const handleClosePopover = () => {
     setAnchorEl(null);
   };
 
@@ -41,29 +87,22 @@ export const Header = () => {
     setLoginOpen(false);
   };
 
-  const fetchUserInfo = async (accessToken: string) => {
-    try {
-      const response = await axios.get('http://localhost:3001/v1/users/profile', {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
-      return localStorage.setItem('data', JSON.stringify(response.data)); // Thông tin user
-    } catch (error) {
-      console.error('Error fetching user info:', error);
-      throw error;
-    }
+  const handleLogout = () => {
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('data');
+    window.location.reload();
   };
 
-  const handleLoggedIn = async (accessToken: string) => {
-    try {
-      await fetchUserInfo(accessToken);
-    } catch (error) {
-      console.error('Error fetching user info:', error);
-    }
-  };
+  useEffect(
+    () => {
+      if (userData) {
+        updateFormattedData();
+      }
+    },
+    //eslint-disable-next-line react-hooks/exhaustive-deps
+    [userData]
+  );
 
-  const userData = localStorage.getItem('data');
   return (
     <>
       <Stack
@@ -81,7 +120,7 @@ export const Header = () => {
 
         <Search />
 
-        {userData ? (
+        {formattedData ? (
           <Stack direction="row" spacing={3} alignItems="center">
             <Link href="/public" underline="none">
               <Stack direction="row" spacing={1} alignItems="center">
@@ -94,18 +133,18 @@ export const Header = () => {
             </Link>
 
             <Stack direction="row" spacing={1} alignItems="center">
-              <IconButton onClick={handleClickPopver}>
+              <IconButton onClick={handleClickPopover}>
                 <Avatar src="" color="" />
               </IconButton>
               <Typography fontSize={16} fontWeight={500}>
-                admin
+                {formattedData.full_name}
               </Typography>
             </Stack>
 
             <Popover
               open={open}
               anchorEl={anchorEl}
-              onClose={handleClosePopver}
+              onClose={handleClosePopover}
               anchorOrigin={{
                 vertical: 'bottom',
                 horizontal: 'right',
@@ -126,10 +165,10 @@ export const Header = () => {
                     <Avatar src="" sx={{ width: 50, height: 50 }} />
                     <Box>
                       <Typography fontWeight={600} fontSize={16}>
-                        Admin
+                        {formattedData.full_name}
                       </Typography>
                       <Typography fontWeight={500} fontSize={12} color="textSecondary">
-                        @Admin
+                        @{formattedData.role}
                       </Typography>
                     </Box>
                   </Stack>
@@ -168,7 +207,7 @@ export const Header = () => {
                 </Box>
 
                 <Box sx={{ p: 2 }}>
-                  <Link href="/public" underline="none">
+                  <Link underline="none">
                     <Typography
                       color="textSecondary"
                       fontSize={14}
@@ -176,7 +215,9 @@ export const Header = () => {
                         '&:hover': {
                           color: 'text.primary',
                         },
+                        cursor: 'pointer',
                       }}
+                      onClick={handleLogout}
                     >
                       Đăng xuất
                     </Typography>
