@@ -1,25 +1,58 @@
-import { Button, Stack } from '@mui/material';
-import { Link } from 'react-router-dom';
+import { Box, Grid, Typography } from '@mui/material';
+import Iconify from '../../../shared/components/iconify';
+import { Link, useLocation } from 'react-router-dom';
 
 export const Navbar = () => {
   return (
-    <Stack spacing={2} sx={{ p: 2 }}>
-      <Button
-        component={Link}
-        to="/"
-        variant="contained"
-        fullWidth
-      >
-        Home
-      </Button>
-      <Button
-        component={Link}
-        to="/dashboard"
-        variant="contained"
-        fullWidth
-      >
-        Dashboard
-      </Button>
-    </Stack>
+    <Grid container alignItems="center" justifyContent="center">
+      <Grid size={12}>
+        <NavbarItem icon="ic:round-home" title="Trang chủ" to="/" />
+      </Grid>
+
+      <Grid size={12}>
+        <NavbarItem icon="ix:road-filled" title="Lộ trình" to="/dashboard" hasBorder={false} />
+      </Grid>
+    </Grid>
+  );
+};
+
+type navBarItemProps = {
+  icon: string;
+  title: string;
+  to: string;
+  hasBorder?: boolean;
+};
+const NavbarItem = ({ icon, title, to, hasBorder = true }: navBarItemProps) => {
+  const location = useLocation();
+
+  return (
+    <Box
+      sx={{
+        m: 1,
+        ...(hasBorder && {
+          borderBottom: '1px dashed #e8ebed',
+        }),
+        pb: 2,
+      }}
+    >
+      <Link to={to} style={{ textDecoration: 'none' }}>
+        <Box
+          sx={{
+            textAlign: 'center',
+            borderRadius: 3,
+            p: 1,
+            '&:hover': {
+              backgroundColor: '#f5f5f5',
+            },
+            backgroundColor: location.pathname === `${to}` ? '#e8ebed' : 'transparent',
+          }}
+        >
+          <Iconify icon={icon} color={'black'} width={25} />
+          <Typography fontSize={14} align="center" fontWeight="bold" color="textPrimary">
+            {title}
+          </Typography>
+        </Box>
+      </Link>
+    </Box>
   );
 };
