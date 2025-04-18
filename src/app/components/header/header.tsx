@@ -109,10 +109,10 @@ export const Header = () => {
         direction="row"
         justifyContent="space-between"
         alignItems="center"
-        sx={{ px: 3, pb: 2, pt: 1, borderBottom: '1px solid #e8ebed' }}
+        sx={{ px: 3, pb: 3, pt: 1, borderBottom: '1px solid #e8ebed' }}
       >
         <Stack direction="row" alignItems="center" spacing={2}>
-          <CardMedia component="img" image="./logo.png" height={50} sx={{ borderRadius: 2 }} />
+          <CardMedia component="img" image="/logo.png" height={50} sx={{ borderRadius: 2 }} />
           <Typography fontWeight={600} fontSize={20}>
             Courses
           </Typography>
@@ -243,6 +243,7 @@ export const Header = () => {
           </Stack>
         )}
       </Stack>
+
       <LoginDialog
         open={isLoginOpen}
         onClose={() => setLoginOpen(false)}

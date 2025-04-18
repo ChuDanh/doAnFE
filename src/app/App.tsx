@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import { DataContext } from '../context/DataContext';
-import Home from './pages/Home';
-import Dashboard from './pages/Dashboard';
+import Home from './pages/home/Home.tsx';
+import Dashboard from './pages/dashboard/Dashboard.tsx';
+import { MyCourses } from './pages/my-courses/my-courses.tsx';
+import { CourseDetail } from './pages/course/detail/page.tsx';
 
 export default function App() {
   const [userData, setUserData] = useState('');
@@ -18,6 +20,8 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/my-courses" element={<MyCourses />} />
+        <Route path="/course/:id" element={<CourseDetail />} />
       </Routes>
     </DataContext.Provider>
   );

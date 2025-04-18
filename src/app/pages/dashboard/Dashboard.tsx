@@ -1,4 +1,4 @@
-import { useData } from '../../context/DataContext.tsx';
+import { useData } from '../../../context/DataContext.tsx';
 
 export default function Dashboard() {
   const { data, count, setCount } = useData();

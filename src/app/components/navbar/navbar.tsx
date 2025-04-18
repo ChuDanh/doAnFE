@@ -10,7 +10,16 @@ export const Navbar = () => {
       </Grid>
 
       <Grid size={12}>
-        <NavbarItem icon="ix:road-filled" title="Lộ trình" to="/dashboard" hasBorder={false} />
+        <NavbarItem icon="ix:road-filled" title="Lộ trình" to="/dashboard" />
+      </Grid>
+
+      <Grid size={12}>
+        <NavbarItem
+          icon="f7:book-fill"
+          title="Khóa học của tôi"
+          to="/my-courses"
+          hasBorder={false}
+        />
       </Grid>
     </Grid>
   );
