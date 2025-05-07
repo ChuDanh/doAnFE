@@ -14,7 +14,6 @@ export const SimpleSlider = ({ images }: SliderProps) => {
     speed: 1000,
     slidesToShow: 1,
     slidesToScroll: 1,
-    arrows: true,
     autoplay: true,
     autoplaySpeed: 5000,
   };

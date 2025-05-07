@@ -1,28 +1,33 @@
-import { useEffect, useState } from 'react';
-import { Route, Routes } from 'react-router-dom';
-import { DataContext } from '../context/DataContext';
-import Home from './pages/home/Home.tsx';
-import Dashboard from './pages/dashboard/Dashboard.tsx';
-import { MyCourses } from './pages/my-courses/my-courses.tsx';
-import { CourseDetail } from './pages/course/detail/page.tsx';
+import { Grid } from '@mui/material';
+import { Header } from './components/header/header.tsx';
+import { Navbar } from './components/navbar/navbar.tsx';
+import { Footer } from './components/footer/footer.tsx';
+import Paths from '../routes/path.tsx';
+import { useLocation } from 'react-router-dom';
 
 export default function App() {
-  const [userData, setUserData] = useState('');
-  const [count, setCount] = useState(0);
-
-  useEffect(() => {
-    const fetchData = localStorage.getItem('data');
-    setUserData(fetchData || '');
-  }, []);
+  const location = useLocation();
+  const showFooter = !location.pathname.includes('/course/learning');
 
   return (
-    <DataContext.Provider value={{ data: userData, setData: setUserData, count, setCount }}>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/my-courses" element={<MyCourses />} />
-        <Route path="/course/:id" element={<CourseDetail />} />
-      </Routes>
-    </DataContext.Provider>
+    <Grid container sx={{ minHeight: '100vh' }}>
+      <Grid size={12}>
+        <Header />
+      </Grid>
+
+      <Grid size={1} sx={{ borderRight: '1px solid #e8ebed' }}>
+        <Navbar />
+      </Grid>
+
+      <Grid size={11}>
+        <Paths />
+      </Grid>
+
+      {showFooter && (
+        <Grid size={12}>
+          <Footer />
+        </Grid>
+      )}
+    </Grid>
   );
 }

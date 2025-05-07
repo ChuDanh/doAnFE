@@ -47,7 +47,7 @@ export const Header = () => {
           Authorization: `Bearer ${accessToken}`,
         },
       });
-      return localStorage.setItem('data', JSON.stringify(response.data)); // Thông tin user
+      localStorage.setItem('data', JSON.stringify(response.data));
     } catch (error: any) {
       enqueueSnackbar(error.data.message, { variant: 'error' });
       throw error;
@@ -58,6 +58,7 @@ export const Header = () => {
     if (userData) {
       setFormattedData(JSON.parse(userData));
     }
+    return {};
   };
 
   const handleLoggedIn = async (accessToken: string) => {

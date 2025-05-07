@@ -3,8 +3,6 @@ import { createContext, useContext } from 'react';
 interface DataContextType {
   data: string;
   setData: (data: string) => void;
-  count: number;
-  setCount: (count: number) => void;
 }
 
 export const DataContext = createContext<DataContextType | undefined>(undefined);

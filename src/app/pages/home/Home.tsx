@@ -18,7 +18,6 @@ type UserProps = {
 
 export default function Home() {
   const { data } = useData();
-  console.log('data: ', data);
 
   return (
     <>
