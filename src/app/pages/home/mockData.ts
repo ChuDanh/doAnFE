@@ -5,7 +5,7 @@ export const CourseList = [
     price: 1200000,
     author: 'admin',
     date_time: '12/12/2025',
-    img: '/slider-img/pic2.jpg',
+    img: '/html-css-pro.png',
   },
   {
     id: '2',
@@ -13,7 +13,7 @@ export const CourseList = [
     price: 1300000,
     author: 'admin',
     date_time: '13/13/2002',
-    img: '/slider-img/pic3.jpeg',
+    img: '/html-css-pro.png',
   },
   {
     id: '3',
@@ -21,7 +21,7 @@ export const CourseList = [
     price: 5000000,
     author: 'admin',
     date_time: '04/12/2002',
-    img: '/slider-img/pic4.jpg',
+    img: '/html-css-pro.png',
   },
   {
     id: '4',
@@ -29,7 +29,7 @@ export const CourseList = [
     price: 1300000,
     author: 'admin',
     date_time: '13/13/2002',
-    img: '/slider-img/pic3.jpeg',
+    img: '/html-css-pro.png',
   },
   {
     id: '5',
@@ -37,7 +37,7 @@ export const CourseList = [
     price: 1200000,
     author: 'admin',
     date_time: '12/12/2025',
-    img: '/slider-img/pic2.jpg',
+    img: '/html-css-pro.png',
   },
 ];
 
@@ -48,7 +48,7 @@ export const courseListFree = [
     price: 0,
     author: 'admin',
     date_time: '13/13/2002',
-    img: '/slider-img/pic3.jpeg',
+    img: '/it-beginner.png',
   },
 
   {
@@ -57,7 +57,7 @@ export const courseListFree = [
     price: 0,
     author: 'admin',
     date_time: '13/13/2002',
-    img: '/slider-img/pic3.jpeg',
+    img: '/it-beginner.png',
   },
 
   {
@@ -66,7 +66,7 @@ export const courseListFree = [
     price: 0,
     author: 'admin',
     date_time: '13/13/2002',
-    img: '/slider-img/pic3.jpeg',
+    img: '/it-beginner.png',
   },
 
   {
@@ -75,7 +75,7 @@ export const courseListFree = [
     price: 0,
     author: 'admin',
     date_time: '13/13/2002',
-    img: '/slider-img/pic3.jpeg',
+    img: '/it-beginner.png',
   },
 
   {
@@ -84,7 +84,7 @@ export const courseListFree = [
     price: 0,
     author: 'admin',
     date_time: '13/13/2002',
-    img: '/slider-img/pic3.jpeg',
+    img: '/it-beginner.png',
   },
 
   {
@@ -93,6 +93,6 @@ export const courseListFree = [
     price: 0,
     author: 'admin',
     date_time: '13/13/2002',
-    img: '/slider-img/pic3.jpeg',
+    img: '/it-beginner.png',
   },
 ];

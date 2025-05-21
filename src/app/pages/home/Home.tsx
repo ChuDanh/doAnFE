@@ -6,26 +6,26 @@ import { CourseList, courseListFree } from './mockData.ts';
 import { CourseItem } from '../../../shared/components/course-item/course-item.tsx';
 import Iconify from '../../../shared/components/iconify';
 
-type UserProps = {
-  full_name: string;
-  username: string;
-  email: string;
-  phone_number: string;
-  address: string;
-  total_courses: string;
-  total_prices: string;
-};
+// type UserProps = {
+//   full_name: string;
+//   username: string;
+//   email: string;
+//   phone_number: string;
+//   address: string;
+//   total_courses: string;
+//   total_prices: string;
+// };
 
 export default function Home() {
   const { data } = useData();
 
   return (
     <>
-      <Box sx={{ pl: 1, pr: 3, pt: 2, mb: 3 }}>
+      <Box sx={{ pl: 1, pt: 2, mb: 3 }}>
         <SimpleSlider images={IMG} />
       </Box>
 
-      <Typography sx={{ pt: 5, pl: 8, mb: 2 }} fontSize={30} fontWeight={500}>
+      <Typography sx={{ pt: 5, pl: 8, mb: 2 }} fontSize={30} fontWeight={600}>
         Khóa học nâng cao
         <Iconify
           icon="material-symbols-light:crown-rounded"
@@ -51,7 +51,7 @@ export default function Home() {
         ))}
       </Grid>
 
-      <Typography sx={{ pt: 5, pl: 8, mb: 2 }} fontSize={30} fontWeight={500}>
+      <Typography sx={{ pt: 5, pl: 8, mb: 2 }} fontSize={30} fontWeight={600}>
         Khóa học miễn phí
       </Typography>
 

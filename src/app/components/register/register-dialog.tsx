@@ -6,9 +6,6 @@ import {
   Grid,
   IconButton,
   Link,
-  MenuItem,
-  Select,
-  SelectChangeEvent,
   Stack,
   TextField,
   Typography,
@@ -16,7 +13,7 @@ import {
 import Iconify from '../../../shared/components/iconify';
 import Box from '@mui/material/Box';
 import { FieldTitle } from '../../../shared/components/field-title/field-title.tsx';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import axios from 'axios';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -41,8 +38,6 @@ type FormData = {
 
 export const RegisterDialog = ({ open, onClose, onSwitchToLogin }: Props) => {
   const { enqueueSnackbar } = useSnackbar();
-
-  const [role, setRole] = useState('user');
 
   const defaultValues = useMemo(
     () => ({
@@ -70,10 +65,6 @@ export const RegisterDialog = ({ open, onClose, onSwitchToLogin }: Props) => {
     reset,
     formState: { errors },
   } = methods;
-
-  const handleChangeRole = (event: SelectChangeEvent) => {
-    setRole(event.target.value);
-  };
 
   const onSubmit = handleSubmit(async (data: FormData) => {
     try {
@@ -103,7 +94,7 @@ export const RegisterDialog = ({ open, onClose, onSwitchToLogin }: Props) => {
         </IconButton>
       </Stack>
       <DialogTitle sx={{ pb: 1 }} textAlign="center">
-        <img src="./logo.png" height={60} style={{ borderRadius: 10 }} />
+        <img src="/logo.png" height={60} style={{ borderRadius: 10 }} />
         <Typography fontWeight={600} fontSize={20}>
           Đăng ký
         </Typography>
@@ -184,20 +175,6 @@ export const RegisterDialog = ({ open, onClose, onSwitchToLogin }: Props) => {
                   error={!!errors.phone_number}
                   helperText={errors.phone_number?.message}
                 />
-              </Grid>
-
-              <Grid size={12}>
-                <FieldTitle title="Vai trò" />
-                <Select
-                  {...register('role')}
-                  fullWidth
-                  size="small"
-                  value={role}
-                  onChange={handleChangeRole}
-                >
-                  <MenuItem value="user">Người dùng</MenuItem>
-                  <MenuItem value="seller">Người bán hàng</MenuItem>
-                </Select>
               </Grid>
             </Grid>
             <Stack

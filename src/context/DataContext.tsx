@@ -1,8 +1,8 @@
 import { createContext, useContext } from 'react';
 
 interface DataContextType {
-  data: string;
-  setData: (data: string) => void;
+  data: any;
+  mutate: () => Promise<void>;
 }
 
 export const DataContext = createContext<DataContextType | undefined>(undefined);

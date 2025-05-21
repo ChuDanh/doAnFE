@@ -11,64 +11,22 @@ import {
 } from '@mui/material';
 import { LoginDialog } from '../login/login-dialog.tsx';
 import { RegisterDialog } from '../register/register-dialog.tsx';
-import { useEffect, useState } from 'react';
-import axios from 'axios';
+import { useState } from 'react';
 import Iconify from '../../../shared/components/iconify';
 import { Search } from '../search/search.tsx';
 import { useSnackbar } from 'notistack';
-import { userData } from '../../../shared/ultils/user.ts';
-
-type UserProps = {
-  full_name: string;
-  username: string;
-  email: string;
-  phone_number: string;
-  address: string;
-  role: string;
-  total_courses: string;
-  total_prices: string;
-};
+import { useData } from '../../../context/DataContext.tsx';
 
 export const Header = () => {
+  const { data, mutate } = useData();
   const { enqueueSnackbar } = useSnackbar();
 
+  console.log('data: ', data);
   const [isLoginOpen, setLoginOpen] = useState(false);
   const [isRegisterOpen, setRegisterOpen] = useState(false);
 
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const open = Boolean(anchorEl);
-
-  const [formattedData, setFormattedData] = useState<UserProps>();
-
-  const fetchUserInfo = async (accessToken: string) => {
-    try {
-      const response = await axios.get('http://localhost:3001/v1/users/profile', {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
-      localStorage.setItem('data', JSON.stringify(response.data));
-    } catch (error: any) {
-      enqueueSnackbar(error.data.message, { variant: 'error' });
-      throw error;
-    }
-  };
-
-  const updateFormattedData = () => {
-    if (userData) {
-      setFormattedData(JSON.parse(userData));
-    }
-    return {};
-  };
-
-  const handleLoggedIn = async (accessToken: string) => {
-    try {
-      await fetchUserInfo(accessToken);
-      updateFormattedData();
-    } catch (error) {
-      console.error('Error fetching user info:', error);
-    }
-  };
 
   const handleClickPopover = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -88,21 +46,14 @@ export const Header = () => {
     setLoginOpen(false);
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('data');
-    window.location.reload();
+  const handleLogout = async () => {
+    try {
+      localStorage.removeItem('accessToken');
+      await mutate();
+    } catch (error: any) {
+      enqueueSnackbar(error.response.data.message, { variant: 'error' });
+    }
   };
-
-  useEffect(
-    () => {
-      if (userData) {
-        updateFormattedData();
-      }
-    },
-    //eslint-disable-next-line react-hooks/exhaustive-deps
-    [userData]
-  );
 
   return (
     <>
@@ -121,9 +72,9 @@ export const Header = () => {
 
         <Search />
 
-        {formattedData ? (
+        {data ? (
           <Stack direction="row" spacing={3} alignItems="center">
-            <Link href="/public" underline="none">
+            <Link href="/cart" underline="none">
               <Stack direction="row" spacing={1} alignItems="center">
                 <Typography color="textPrimary" fontWeight={400}>
                   Giỏ hàng
@@ -138,7 +89,7 @@ export const Header = () => {
                 <Avatar src="" color="" />
               </IconButton>
               <Typography fontSize={16} fontWeight={500}>
-                {formattedData.full_name}
+                {data.full_name}
               </Typography>
             </Stack>
 
@@ -166,10 +117,10 @@ export const Header = () => {
                     <Avatar src="" sx={{ width: 50, height: 50 }} />
                     <Box>
                       <Typography fontWeight={600} fontSize={16}>
-                        {formattedData.full_name}
+                        {data.full_name}
                       </Typography>
                       <Typography fontWeight={500} fontSize={12} color="textSecondary">
-                        @{formattedData.role}
+                        @{data.role}
                       </Typography>
                     </Box>
                   </Stack>
@@ -249,7 +200,6 @@ export const Header = () => {
         open={isLoginOpen}
         onClose={() => setLoginOpen(false)}
         onSwitchToRegister={openRegister}
-        onLoggedIn={handleLoggedIn}
       />
       <RegisterDialog
         open={isRegisterOpen}
