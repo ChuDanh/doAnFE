@@ -21,7 +21,6 @@ export const Header = () => {
   const { data, mutate } = useData();
   const { enqueueSnackbar } = useSnackbar();
 
-  console.log('data: ', data);
   const [isLoginOpen, setLoginOpen] = useState(false);
   const [isRegisterOpen, setRegisterOpen] = useState(false);
 
