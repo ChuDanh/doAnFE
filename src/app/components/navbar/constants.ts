@@ -18,18 +18,37 @@ export const NAV_ITEMS: TNavItem[] = [
   },
   {
     icon: 'lsicon:management-filled',
-    title: 'Quản lý khóa học',
-    path: '/manage-courses',
+    title: 'Quản lý',
+    path: '/manage',
     children: [
       {
-        icon: 'material-symbols:list-rounded',
-        title: 'Danh sách khóa học',
-        path: '/manage-courses/list',
+        icon: 'material-symbols:dashboard',
+        title: 'Khóa học',
+        path: '/manage/courses',
+        children: [
+          {
+            icon: 'material-symbols:list-rounded',
+            title: 'Danh sách khóa học',
+            path: '/manage/courses/list',
+          },
+          {
+            icon: 'gridicons:add',
+            title: 'Thêm khóa học',
+            path: '/manage-courses/add',
+          },
+        ],
       },
       {
-        icon: 'gridicons:add',
-        title: 'Thêm khóa học',
-        path: '/manage-courses/add',
+        icon: 'icon-park-solid:map-road-two',
+        title: 'Lộ trình',
+        path: '/manage/learning-path',
+        children: [
+          {
+            icon: 'material-symbols:list-rounded',
+            title: 'Danh sách lộ trình',
+            path: '/manage/learning-path/list',
+          },
+        ],
       },
     ],
   },

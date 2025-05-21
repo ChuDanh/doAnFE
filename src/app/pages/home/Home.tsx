@@ -6,16 +6,6 @@ import { CourseList, courseListFree } from './mockData.ts';
 import { CourseItem } from '../../../shared/components/course-item/course-item.tsx';
 import Iconify from '../../../shared/components/iconify';
 
-// type UserProps = {
-//   full_name: string;
-//   username: string;
-//   email: string;
-//   phone_number: string;
-//   address: string;
-//   total_courses: string;
-//   total_prices: string;
-// };
-
 export default function Home() {
   const { data } = useData();
 

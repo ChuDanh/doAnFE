@@ -4,7 +4,7 @@ import { MyCourses } from '../app/pages/my-courses/my-courses.tsx';
 import { CourseDetail } from '../app/pages/course/detail/page.tsx';
 import { LessonPage } from '../app/pages/course/learning/view/page.tsx';
 import { LearningPath } from '../app/pages/learning-path/view/page.tsx';
-import { FrontendLearningPath } from '../app/pages/learning-path/front-end/page.tsx';
+import { LearningPathDetail } from '../app/pages/learning-path/detail/page.tsx';
 import { CartPage } from '../app/pages/cart/page.tsx';
 
 export default function Paths() {
@@ -19,7 +19,7 @@ export default function Paths() {
 
       {/*learning path*/}
       <Route path="/learning-path" element={<LearningPath />} />
-      <Route path="/learning-path/front-end" element={<FrontendLearningPath />} />
+      <Route path="/learning-path/:id" element={<LearningPathDetail />} />
 
       {/*  my course*/}
       <Route path="/my-courses" element={<MyCourses />} />

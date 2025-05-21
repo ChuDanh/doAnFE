@@ -1,24 +1,27 @@
 // pages/LearningPath.tsx
 import { Box, Button, Card, CardContent, Grid, Typography } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
 const learningPaths = [
   {
+    id: 1,
     title: 'Lộ trình học Front-end',
     description:
       'Lập trình viên Front-end là người xây dựng ra giao diện websites. Trong phần này F8 sẽ chia sẻ cho bạn lộ trình để trở thành lập trình viên Front-end nhé.',
-    icon: '/front-end-pic.png',
-    href: '/learning-path/front-end',
+    url_img: '/AI_development-roadmap.jpg',
   },
   {
+    id: 2,
     title: 'Lộ trình học Back-end',
     description:
       'Trái với Front-end thì lập trình viên Back-end là người làm việc với dữ liệu, công việc thường nặng tính logic hơn. Chúng ta sẽ cùng tìm hiểu thêm về lộ trình học Back-end nhé.',
-    icon: '/back-end-pic.png',
-    href: '/learning-path/back-end',
+    url_img: '/AI_development-roadmap.jpg',
   },
 ];
 
 export const LearningPath = () => {
+  const router = useNavigate();
+
   return (
     <Box px={{ xs: 2, md: 4 }} py={6}>
       <Typography variant="h3" fontWeight="bold" gutterBottom align="center">
@@ -32,49 +35,97 @@ export const LearningPath = () => {
       <Grid container spacing={3} sx={{ mt: 8 }}>
         {learningPaths.map((path, index) => (
           <Grid size={{ xs: 12, md: 6 }} key={index}>
-            <Card elevation={4} sx={{ borderRadius: 3, px: 2 }}>
-              <CardContent>
-                <Grid container spacing={2} alignItems="center">
-                  <Grid size={9}>
-                    <Typography variant="h5" fontWeight="bold" gutterBottom>
-                      {path.title}
-                    </Typography>
-                    <Typography variant="body2" mb={2} color="textSecondary" fontSize={14}>
-                      {path.description}
-                    </Typography>
+            {/*<Card elevation={4} sx={{ borderRadius: 3, px: 2, height: '100%' }}>*/}
+            {/*  <CardContent sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>*/}
+            {/*    <Grid container spacing={2} alignItems="flex-start" sx={{ flex: 1 }}>*/}
+            {/*      <Grid size={12}>*/}
+            {/*        <Typography variant="h5" fontWeight="bold" gutterBottom>*/}
+            {/*          {path.title}*/}
+            {/*        </Typography>*/}
+            {/*        <Typography variant="body2" mb={2} color="textSecondary" fontSize={14}>*/}
+            {/*          {path.description}*/}
+            {/*        </Typography>*/}
 
-                    <Button variant="contained" size="small" href={path.href}>
-                      Xem chi tiết
-                    </Button>
-                  </Grid>
-
-                  <Grid size={3} container justifyContent="center">
-                    <Box
-                      sx={{
-                        width: 100,
-                        height: 100,
-                        borderRadius: '50%',
-                        border: '4px solid orange',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        bgcolor: '#fff',
-                        p: 1,
-                      }}
-                    >
-                      <img
-                        src={path.icon}
-                        alt={path.title}
-                        style={{ width: '100%', height: 'auto' }}
-                      />
-                    </Box>
-                  </Grid>
-                </Grid>
-              </CardContent>
-            </Card>
+            {/*        <Button*/}
+            {/*          variant="contained"*/}
+            {/*          size="small"*/}
+            {/*          onClick={() => router(`/learning-path/${path.id}`)}*/}
+            {/*          sx={{*/}
+            {/*            position: 'relative',*/}
+            {/*            left: 0,*/}
+            {/*            bottom: 0,*/}
+            {/*            mt: 'auto',*/}
+            {/*          }}*/}
+            {/*        >*/}
+            {/*          Xem chi tiết*/}
+            {/*        </Button>*/}
+            {/*      </Grid>*/}
+            {/*    </Grid>*/}
+            {/*  </CardContent>*/}
+            {/*</Card>*/}
+            <CustomCard
+              title={path.title}
+              description={path.description}
+              onClick={() => router(`/learning-path/${path.id}`)}
+            />
           </Grid>
         ))}
       </Grid>
     </Box>
+  );
+};
+
+type Props = {
+  title: string;
+  description: string;
+  onClick: () => void;
+};
+const CustomCard = ({ title, description, onClick }: Props) => {
+  return (
+    <Card
+      elevation={4}
+      sx={{
+        position: 'relative',
+        borderRadius: 2,
+      }}
+    >
+      <CardContent
+        sx={{
+          minHeight: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+          p: 3,
+        }}
+      >
+        <Typography variant="h5" fontWeight="bold" gutterBottom>
+          {title}
+        </Typography>
+
+        <Typography
+          variant="body2"
+          color="text.secondary"
+          sx={{
+            display: '-webkit-box', // tạo 1 container flexbox, cần thiết cho WebkitLineClamp
+            overflow: 'hidden',
+            textOverflow: 'ellipsis', // hiển thị ...
+            WebkitBoxOrient: 'vertical', // định hướng theo chiều dọc
+            WebkitLineClamp: 2, // giới hạn số dòng hiển thị
+          }}
+        >
+          {description}
+        </Typography>
+
+        <Box
+          sx={{
+            mt: 'auto',
+            pt: 2,
+          }}
+        >
+          <Button variant="contained" size="medium" onClick={onClick}>
+            Xem chi tiết
+          </Button>
+        </Box>
+      </CardContent>
+    </Card>
   );
 };
