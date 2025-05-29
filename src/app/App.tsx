@@ -4,7 +4,7 @@ import { Navbar } from './components/navbar/navbar.tsx';
 import { Footer } from './components/footer/footer.tsx';
 import Paths from '../routes/path.tsx';
 import { useLocation } from 'react-router-dom';
-import { WhoAmI } from '../shared/hooks/who-am-i.ts';
+import { WhoAmI } from '../core/who-am-i/who-am-i.ts';
 import { DataContext } from '../context/DataContext.tsx';
 
 export default function App() {

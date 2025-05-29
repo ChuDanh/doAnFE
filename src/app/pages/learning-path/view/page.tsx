@@ -1,4 +1,3 @@
-// pages/LearningPath.tsx
 import { Box, Button, Card, CardContent, Grid, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
@@ -35,34 +34,6 @@ export const LearningPath = () => {
       <Grid container spacing={3} sx={{ mt: 8 }}>
         {learningPaths.map((path, index) => (
           <Grid size={{ xs: 12, md: 6 }} key={index}>
-            {/*<Card elevation={4} sx={{ borderRadius: 3, px: 2, height: '100%' }}>*/}
-            {/*  <CardContent sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>*/}
-            {/*    <Grid container spacing={2} alignItems="flex-start" sx={{ flex: 1 }}>*/}
-            {/*      <Grid size={12}>*/}
-            {/*        <Typography variant="h5" fontWeight="bold" gutterBottom>*/}
-            {/*          {path.title}*/}
-            {/*        </Typography>*/}
-            {/*        <Typography variant="body2" mb={2} color="textSecondary" fontSize={14}>*/}
-            {/*          {path.description}*/}
-            {/*        </Typography>*/}
-
-            {/*        <Button*/}
-            {/*          variant="contained"*/}
-            {/*          size="small"*/}
-            {/*          onClick={() => router(`/learning-path/${path.id}`)}*/}
-            {/*          sx={{*/}
-            {/*            position: 'relative',*/}
-            {/*            left: 0,*/}
-            {/*            bottom: 0,*/}
-            {/*            mt: 'auto',*/}
-            {/*          }}*/}
-            {/*        >*/}
-            {/*          Xem chi tiết*/}
-            {/*        </Button>*/}
-            {/*      </Grid>*/}
-            {/*    </Grid>*/}
-            {/*  </CardContent>*/}
-            {/*</Card>*/}
             <CustomCard
               title={path.title}
               description={path.description}

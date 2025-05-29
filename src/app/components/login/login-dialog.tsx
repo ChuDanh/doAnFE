@@ -19,7 +19,7 @@ import { useEffect, useMemo } from 'react';
 import { useLoginValidation } from './validation.ts';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useSnackbar } from 'notistack';
-import { WhoAmI } from '../../../shared/hooks/who-am-i.ts';
+import { WhoAmI } from '../../../core/who-am-i/who-am-i.ts';
 
 type Props = {
   open: boolean;

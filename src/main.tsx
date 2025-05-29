@@ -19,7 +19,6 @@ createRoot(document.getElementById('root')!).render(
             revalidateOnFocus: false,
             // Tải lại khi kết nối mạng được khôi phục
             revalidateOnReconnect: false,
-            refreshInterval: 5000,
           }}
         >
           <App />

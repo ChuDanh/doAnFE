@@ -1,16 +1,23 @@
 import Iconify from '../../../shared/components/iconify';
 import { TextField } from '@mui/material';
 import { FormProvider, useForm } from 'react-hook-form';
+import { useSnackbar } from 'notistack';
+import { useNavigate } from 'react-router-dom';
 
 export const Search = () => {
+  const router = useNavigate();
+
+  const { enqueueSnackbar } = useSnackbar();
+
   const methods = useForm();
-  const { register, handleSubmit } = methods;
+  const { register, handleSubmit, setValue } = methods;
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      console.log(data);
-    } catch (err) {
-      console.log(err);
+      router(`/course/search?keyword=${encodeURIComponent(data.keyword)}`);
+      setValue('keyword', '');
+    } catch (err: any) {
+      enqueueSnackbar(err.response.data.message, { variant: 'error' });
     }
   });
 

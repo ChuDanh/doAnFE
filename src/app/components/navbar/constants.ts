@@ -17,7 +17,7 @@ export const NAV_ITEMS: TNavItem[] = [
     path: '/my-courses',
   },
   {
-    icon: 'lsicon:management-filled',
+    icon: 'lsicon:manage-filled',
     title: 'Quản lý',
     path: '/manage',
     children: [
@@ -32,9 +32,9 @@ export const NAV_ITEMS: TNavItem[] = [
             path: '/manage/courses/list',
           },
           {
-            icon: 'gridicons:add',
+            icon: 'gridicons:new',
             title: 'Thêm khóa học',
-            path: '/manage-courses/add',
+            path: '/manage/courses/new',
           },
         ],
       },
@@ -47,6 +47,11 @@ export const NAV_ITEMS: TNavItem[] = [
             icon: 'material-symbols:list-rounded',
             title: 'Danh sách lộ trình',
             path: '/manage/learning-path/list',
+          },
+          {
+            icon: 'gridicons:new',
+            title: 'Thêm lộ trình',
+            path: '/manage-learning-path/new',
           },
         ],
       },

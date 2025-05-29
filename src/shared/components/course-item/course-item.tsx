@@ -1,6 +1,5 @@
 import { Avatar, Card, CardContent, CardMedia, Link, Stack, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { useData } from '../../../context/DataContext.tsx';
 
 type Props = {
   id: string;
@@ -12,8 +11,6 @@ type Props = {
 };
 export const CourseItem = ({ id, img, title, price, author, dateTime }: Props) => {
   const router = useNavigate();
-
-  const { data } = useData();
 
   return (
     <>

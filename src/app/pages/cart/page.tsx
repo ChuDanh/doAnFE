@@ -1,8 +1,8 @@
 import { Box, Button, CardMedia, Typography } from '@mui/material';
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import { data } from './constants.ts';
-import { styleDataGrid } from './styles.ts';
 import Iconify from '../../../shared/components/iconify';
+import { styleDataGrid } from '../../../shared/styles/data-grid-styles.ts';
 
 export const CartPage = () => {
   const columns: GridColDef[] = [
