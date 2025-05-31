@@ -10,7 +10,7 @@ import {
   Tooltip,
   Typography,
 } from '@mui/material';
-import { FormProvider, useForm } from 'react-hook-form';
+import { Controller, FormProvider, useForm } from 'react-hook-form';
 import { FieldTitle } from '../../../../../shared/components/field-title/field-title.tsx';
 import { ChangeEvent, useEffect, useState } from 'react';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -42,11 +42,11 @@ export const DetailEditCourse = ({ state }: Props) => {
       knowledge: data?.knowledge || [],
       chapters:
         data?.chapters?.map((chapter) => ({
-          id: chapter.id,
+          id: chapter._id,
           name: chapter.name,
           lessons:
             chapter.lessons?.map((lesson) => ({
-              id: lesson.id,
+              id: lesson._id,
               name: lesson.name,
               videoUrl: lesson.videoUrl,
             })) || [],
@@ -70,7 +70,34 @@ export const DetailEditCourse = ({ state }: Props) => {
   } = methods;
 
   const onSubmit = handleSubmit(async (data) => {
-    console.log('data', data);
+    const formatData = () => {
+      return {
+        ...data,
+        knowledge: data.knowledge.filter((item) => item.trim() !== ''), // Loại bỏ các trường rỗng
+        chapters: data.chapters.map((chapter) => ({
+          ...chapter,
+          lessons: chapter.lessons.map((lesson) => ({
+            ...lesson,
+            videoUrl: lesson.videoUrl || undefined, // Đảm bảo videoUrl là undefined nếu không có
+          })),
+        })),
+      };
+    };
+
+    try {
+      await fetch(`http://localhost:3001/v1/course/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+        },
+        body: JSON.stringify(formatData()),
+      });
+      enqueueSnackbar('Cập nhật khóa học thành công!', { variant: 'success' });
+      router(`/manage/courses/list`);
+    } catch (err: any) {
+      enqueueSnackbar(err.message, { variant: 'error' });
+    }
   });
 
   const handleAddField = () => {
@@ -86,7 +113,7 @@ export const DetailEditCourse = ({ state }: Props) => {
     setChapters([
       ...chapters,
       {
-        id: `chapter-${Date.now()}`,
+        _id: `chapter-${Date.now()}`,
         name: '',
         lessons: [],
       },
@@ -96,13 +123,13 @@ export const DetailEditCourse = ({ state }: Props) => {
   const handleAddLesson = (chapterId: string) => {
     setChapters(
       chapters.map((chapter) => {
-        if (chapter.id === chapterId) {
+        if (chapter._id === chapterId) {
           return {
             ...chapter,
             lessons: [
               ...chapter.lessons,
               {
-                id: `lesson-${Date.now()}`,
+                _id: `lesson-${Date.now()}`,
                 name: '',
               },
             ],
@@ -116,7 +143,7 @@ export const DetailEditCourse = ({ state }: Props) => {
   const handleChapterNameChange = (chapterId: string, name: string) => {
     setChapters(
       chapters.map((chapter, index) => {
-        if (chapter.id === chapterId) {
+        if (chapter._id === chapterId) {
           setValue(`chapters.${index}.name`, name);
           return { ...chapter, name };
         }
@@ -128,11 +155,11 @@ export const DetailEditCourse = ({ state }: Props) => {
   const handleLessonNameChange = (chapterId: string, lessonId: string, name: string) => {
     setChapters(
       chapters.map((chapter, chapterIndex) => {
-        if (chapter.id === chapterId) {
+        if (chapter._id === chapterId) {
           return {
             ...chapter,
             lessons: chapter.lessons.map((lesson, lessonIndex) => {
-              if (lesson.id === lessonId) {
+              if (lesson._id === lessonId) {
                 setValue(`chapters.${chapterIndex}.lessons.${lessonIndex}.name`, name);
                 return { ...lesson, name };
               }
@@ -173,11 +200,11 @@ export const DetailEditCourse = ({ state }: Props) => {
 
         setChapters(
           chapters.map((chapter) => {
-            if (chapter.id === chapterId) {
+            if (chapter._id === chapterId) {
               return {
                 ...chapter,
                 lessons: chapter.lessons.map((lesson) => {
-                  if (lesson.id === lessonId) {
+                  if (lesson._id === lessonId) {
                     setValue(
                       `chapters.${chapters.indexOf(chapter)}.lessons.${chapter.lessons.indexOf(lesson)}.videoUrl`,
                       urlVideo
@@ -202,11 +229,11 @@ export const DetailEditCourse = ({ state }: Props) => {
   const handleDeleteVideo = (chapterId: string, lessonId: string) => {
     setChapters(
       chapters.map((chapter, chapterIndex) => {
-        if (chapter.id === chapterId) {
+        if (chapter._id === chapterId) {
           return {
             ...chapter,
             lessons: chapter.lessons.map((lesson, lessonIndex) => {
-              if (lesson.id === lessonId) {
+              if (lesson._id === lessonId) {
                 // Xóa videoUrl trong form và state
                 setValue(`chapters.${chapterIndex}.lessons.${lessonIndex}.videoUrl`, undefined);
                 return { ...lesson, videoUrl: undefined, videoPreview: undefined };
@@ -221,16 +248,16 @@ export const DetailEditCourse = ({ state }: Props) => {
   };
 
   const handleDeleteChapter = (chapterId: string) => {
-    setChapters(chapters.filter((chapter) => chapter.id !== chapterId));
+    setChapters(chapters.filter((chapter) => chapter._id !== chapterId));
   };
 
   const handleDeleteLesson = (chapterId: string, lessonId: string) => {
     setChapters(
       chapters.map((chapter) => {
-        if (chapter.id === chapterId) {
+        if (chapter._id === chapterId) {
           return {
             ...chapter,
-            lessons: chapter.lessons.filter((lesson) => lesson.id !== lessonId),
+            lessons: chapter.lessons.filter((lesson) => lesson._id !== lessonId),
           };
         }
         return chapter;
@@ -301,16 +328,17 @@ export const DetailEditCourse = ({ state }: Props) => {
 
             <Grid size={3}>
               <FieldTitle title="Trình độ" required fontSize={18} />
-              <Select
-                variant="outlined"
-                {...register('level')}
-                fullWidth
-                size="small"
+              <Controller
+                name="level"
+                control={methods.control}
                 defaultValue="basic"
-              >
-                <MenuItem value="basic">Cơ bản</MenuItem>
-                <MenuItem value="advanced">Nâng cao</MenuItem>
-              </Select>
+                render={({ field }) => (
+                  <Select {...field} fullWidth size="small" variant="outlined">
+                    <MenuItem value="basic">Cơ bản</MenuItem>
+                    <MenuItem value="advanced">Nâng cao</MenuItem>
+                  </Select>
+                )}
+              />
             </Grid>
 
             <Grid size={12}>
@@ -363,7 +391,7 @@ export const DetailEditCourse = ({ state }: Props) => {
               <FieldTitle title="Nội dung khóa học" fontSize={18} />
               {chapters.map((chapter, index) => (
                 <Box
-                  key={chapter.id}
+                  key={chapter._id}
                   sx={{
                     mb: 5,
                     pl: 2,
@@ -380,7 +408,7 @@ export const DetailEditCourse = ({ state }: Props) => {
                     <TextField
                       variant="outlined"
                       value={chapter.name}
-                      onChange={(e) => handleChapterNameChange(chapter.id, e.target.value)}
+                      onChange={(e) => handleChapterNameChange(chapter._id, e.target.value)}
                       size="small"
                       placeholder="Nhập tên chương..."
                       fullWidth
@@ -388,7 +416,7 @@ export const DetailEditCourse = ({ state }: Props) => {
                     {state === 'edit' && (
                       <Button
                         color="error"
-                        onClick={() => handleDeleteChapter(chapter.id)}
+                        onClick={() => handleDeleteChapter(chapter._id)}
                         sx={{ ml: 1 }}
                       >
                         <DeleteIcon />
@@ -397,7 +425,7 @@ export const DetailEditCourse = ({ state }: Props) => {
                   </Box>
 
                   {chapter.lessons.map((lesson) => (
-                    <Box key={lesson.id} sx={{ ml: 4, mb: 2 }}>
+                    <Box key={lesson._id} sx={{ ml: 4, mb: 2 }}>
                       <Box display="flex" alignItems="center" mb={1} gap={2}>
                         <FieldTitle
                           title="Tên bài học"
@@ -409,7 +437,7 @@ export const DetailEditCourse = ({ state }: Props) => {
                           variant="outlined"
                           value={lesson.name}
                           onChange={(e) =>
-                            handleLessonNameChange(chapter.id, lesson.id, e.target.value)
+                            handleLessonNameChange(chapter._id, lesson._id, e.target.value)
                           }
                           size="small"
                           placeholder="Nhập tên bài học..."
@@ -419,7 +447,7 @@ export const DetailEditCourse = ({ state }: Props) => {
                         {state === 'edit' && (
                           <Button
                             color="error"
-                            onClick={() => handleDeleteLesson(chapter.id, lesson.id)}
+                            onClick={() => handleDeleteLesson(chapter._id, lesson._id)}
                             sx={{ ml: 1 }}
                           >
                             <DeleteIcon />
@@ -433,11 +461,11 @@ export const DetailEditCourse = ({ state }: Props) => {
                             <input
                               type="file"
                               accept="video/*"
-                              onChange={(e) => handleVideoUpload(chapter.id, lesson.id, e)}
+                              onChange={(e) => handleVideoUpload(chapter._id, lesson._id, e)}
                               style={{ display: 'none' }}
-                              id={`video-upload-${lesson.id}`}
+                              id={`video-upload-${lesson._id}`}
                             />
-                            <label htmlFor={`video-upload-${lesson.id}`}>
+                            <label htmlFor={`video-upload-${lesson._id}`}>
                               <LoadingButton
                                 variant="outlined"
                                 color="info"
@@ -455,7 +483,7 @@ export const DetailEditCourse = ({ state }: Props) => {
                               <Button
                                 variant="outlined"
                                 color="error"
-                                onClick={() => handleDeleteVideo(chapter.id, lesson.id)}
+                                onClick={() => handleDeleteVideo(chapter._id, lesson._id)}
                                 startIcon={<DeleteIcon />}
                               >
                                 Xóa Video
@@ -482,7 +510,7 @@ export const DetailEditCourse = ({ state }: Props) => {
                     <Button
                       variant="text"
                       color="warning"
-                      onClick={() => handleAddLesson(chapter.id)}
+                      onClick={() => handleAddLesson(chapter._id)}
                       startIcon={<Iconify icon="mdi:plus" />}
                       sx={{ ml: 4, mt: 1 }}
                     >

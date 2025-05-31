@@ -5,21 +5,25 @@ export const NAV_ITEMS: TNavItem[] = [
     icon: 'ic:round-home',
     title: 'Trang chủ',
     path: '/courses',
+    roles: ['user', 'guest', 'admin'], // Accessible by all roles
   },
   {
     icon: 'ix:road-filled',
     title: 'Lộ trình',
     path: '/learning-path',
+    roles: ['user', 'guest', 'admin'],
   },
   {
     icon: 'f7:book-fill',
     title: 'Khóa học của tôi',
     path: '/my-courses',
+    roles: ['user', 'admin'],
   },
   {
-    icon: 'lsicon:manage-filled',
+    icon: 'lsicon:management-filled',
     title: 'Quản lý',
     path: '/manage',
+    roles: ['admin', 'seller'],
     children: [
       {
         icon: 'material-symbols:dashboard',
@@ -32,9 +36,9 @@ export const NAV_ITEMS: TNavItem[] = [
             path: '/manage/courses/list',
           },
           {
-            icon: 'gridicons:new',
+            icon: 'bx:plus-circle',
             title: 'Thêm khóa học',
-            path: '/manage/courses/new',
+            path: '/manage/courses/add',
           },
         ],
       },
@@ -42,6 +46,7 @@ export const NAV_ITEMS: TNavItem[] = [
         icon: 'icon-park-solid:map-road-two',
         title: 'Lộ trình',
         path: '/manage/learning-path',
+        roles: ['admin'],
         children: [
           {
             icon: 'material-symbols:list-rounded',
@@ -49,18 +54,19 @@ export const NAV_ITEMS: TNavItem[] = [
             path: '/manage/learning-path/list',
           },
           {
-            icon: 'gridicons:new',
+            icon: 'bx:plus-circle',
             title: 'Thêm lộ trình',
-            path: '/manage-learning-path/new',
+            path: '/manage/learning-path/add',
           },
         ],
       },
     ],
   },
   {
-    icon: 'ri:todo-fill',
+    icon: 'mdi:report-box',
     title: 'Báo cáo',
     path: '/report',
+    roles: ['admin', 'seller'],
     children: [
       {
         icon: 'mdi:report-box-multiple',

@@ -6,7 +6,7 @@ type Props = {
   setValue: (name: 'image_course', value: string) => void;
   getValues: (name: 'image_course') => string;
   imageUrl?: string;
-  state: 'edit' | 'detail' | null;
+  state: 'edit' | 'detail' | 'add';
 };
 
 export const ImageUploader = ({ setValue, imageUrl, state }: Props) => {
@@ -59,7 +59,7 @@ export const ImageUploader = ({ setValue, imageUrl, state }: Props) => {
               }}
             />
           </Box>
-          {state === 'edit' && (
+          {(state === 'edit' || state === 'add') && (
             <Button
               onClick={handleRemoveImage}
               variant="outlined"

@@ -12,6 +12,7 @@ import { AddCourse } from '../app/pages/manage/courses/new/add-course.tsx';
 import { SearchResult } from '../app/pages/course/search-result/search_result.tsx';
 import { LearningPathPage } from '../app/pages/manage/learning-path/list/page.tsx';
 import { AddLearningPathPage } from '../app/pages/manage/learning-path/new/page.tsx';
+import { MyProfilePage } from '../app/pages/my-profile/page.tsx';
 
 export default function Paths() {
   return (
@@ -21,7 +22,7 @@ export default function Paths() {
       {/*courses list*/}
       <Route path="/courses" element={<Home />} />
       <Route path="/course/:id" element={<CourseDetail />} />
-      <Route path="/course/learning" element={<LessonPage />} />
+      <Route path="/course/learning/:id" element={<LessonPage />} />
       <Route path="/course/search" element={<SearchResult />} />
 
       {/*learning path*/}
@@ -43,6 +44,9 @@ export default function Paths() {
       {/*  manage learning path*/}
       <Route path="/manage/learning-path/list" element={<LearningPathPage />} />
       <Route path="/manage/learning-path/add" element={<AddLearningPathPage />} />
+
+      {/*  my profile*/}
+      <Route path="/my-profile" element={<MyProfilePage />} />
     </Routes>
   );
 }

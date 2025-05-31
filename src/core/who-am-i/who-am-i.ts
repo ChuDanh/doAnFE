@@ -1,7 +1,8 @@
 import useSWR from 'swr';
+import { TUserProfile } from '../types.ts';
 
 export const WhoAmI = () => {
-  return useSWR('http://localhost:3001/v1/users/profile', async (url) => {
+  return useSWR<TUserProfile>('http://localhost:3001/v1/users/profile', async (url: string) => {
     const accessToken = localStorage.getItem('accessToken');
     if (!accessToken) return null;
 

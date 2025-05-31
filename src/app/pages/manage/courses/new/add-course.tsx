@@ -65,7 +65,7 @@ export const AddCourse = () => {
           })),
         })),
       };
-      console.log('Updated Data:', updatedData);
+
       await axios.post(' http://localhost:3001/v1/course/add', updatedData, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
@@ -91,7 +91,7 @@ export const AddCourse = () => {
     setChapters([
       ...chapters,
       {
-        id: `chapter-${Date.now()}`,
+        _id: `chapter-${Date.now()}`,
         name: '',
         lessons: [],
       },
@@ -101,13 +101,13 @@ export const AddCourse = () => {
   const handleAddLesson = (chapterId: string) => {
     setChapters(
       chapters.map((chapter) => {
-        if (chapter.id === chapterId) {
+        if (chapter._id === chapterId) {
           return {
             ...chapter,
             lessons: [
               ...chapter.lessons,
               {
-                id: `lesson-${Date.now()}`,
+                _id: `lesson-${Date.now()}`,
                 name: '',
               },
             ],
@@ -121,7 +121,7 @@ export const AddCourse = () => {
   const handleChapterNameChange = (chapterId: string, name: string) => {
     setChapters(
       chapters.map((chapter, index) => {
-        if (chapter.id === chapterId) {
+        if (chapter._id === chapterId) {
           setValue(`chapters.${index}.name`, name);
           return { ...chapter, name };
         }
@@ -133,11 +133,11 @@ export const AddCourse = () => {
   const handleLessonNameChange = (chapterId: string, lessonId: string, name: string) => {
     setChapters(
       chapters.map((chapter, chapterIndex) => {
-        if (chapter.id === chapterId) {
+        if (chapter._id === chapterId) {
           return {
             ...chapter,
             lessons: chapter.lessons.map((lesson, lessonIndex) => {
-              if (lesson.id === lessonId) {
+              if (lesson._id === lessonId) {
                 setValue(`chapters.${chapterIndex}.lessons.${lessonIndex}.name`, name);
                 return { ...lesson, name };
               }
@@ -179,11 +179,11 @@ export const AddCourse = () => {
 
         setChapters(
           chapters.map((chapter) => {
-            if (chapter.id === chapterId) {
+            if (chapter._id === chapterId) {
               return {
                 ...chapter,
                 lessons: chapter.lessons.map((lesson) => {
-                  if (lesson.id === lessonId) {
+                  if (lesson._id === lessonId) {
                     setValue(
                       `chapters.${chapters.indexOf(chapter)}.lessons.${chapter.lessons.indexOf(lesson)}.videoUrl`,
                       urlVideo
@@ -217,11 +217,11 @@ export const AddCourse = () => {
   const handleDeleteVideo = (chapterId: string, lessonId: string) => {
     setChapters(
       chapters.map((chapter, chapterIndex) => {
-        if (chapter.id === chapterId) {
+        if (chapter._id === chapterId) {
           return {
             ...chapter,
             lessons: chapter.lessons.map((lesson, lessonIndex) => {
-              if (lesson.id === lessonId) {
+              if (lesson._id === lessonId) {
                 // Xóa videoUrl trong form và state
                 setValue(`chapters.${chapterIndex}.lessons.${lessonIndex}.videoUrl`, undefined);
                 return {
@@ -241,16 +241,16 @@ export const AddCourse = () => {
   };
 
   const handleDeleteChapter = (chapterId: string) => {
-    setChapters(chapters.filter((chapter) => chapter.id !== chapterId));
+    setChapters(chapters.filter((chapter) => chapter._id !== chapterId));
   };
 
   const handleDeleteLesson = (chapterId: string, lessonId: string) => {
     setChapters(
       chapters.map((chapter) => {
-        if (chapter.id === chapterId) {
+        if (chapter._id === chapterId) {
           return {
             ...chapter,
-            lessons: chapter.lessons.filter((lesson) => lesson.id !== lessonId),
+            lessons: chapter.lessons.filter((lesson) => lesson._id !== lessonId),
           };
         }
         return chapter;
@@ -348,7 +348,7 @@ export const AddCourse = () => {
               <FieldTitle title="Nội dung khóa học" fontSize={18} />
               {chapters.map((chapter, index) => (
                 <Box
-                  key={chapter.id}
+                  key={chapter._id}
                   sx={{
                     mb: 5,
                     pl: 2,
@@ -365,14 +365,14 @@ export const AddCourse = () => {
                     <TextField
                       variant="outlined"
                       value={chapter.name}
-                      onChange={(e) => handleChapterNameChange(chapter.id, e.target.value)}
+                      onChange={(e) => handleChapterNameChange(chapter._id, e.target.value)}
                       size="small"
                       placeholder="Nhập tên chương..."
                       fullWidth
                     />
                     <Button
                       color="error"
-                      onClick={() => handleDeleteChapter(chapter.id)}
+                      onClick={() => handleDeleteChapter(chapter._id)}
                       sx={{ ml: 1 }}
                     >
                       <DeleteIcon />
@@ -380,7 +380,7 @@ export const AddCourse = () => {
                   </Box>
 
                   {chapter.lessons.map((lesson) => (
-                    <Box key={lesson.id} sx={{ ml: 4, mb: 2 }}>
+                    <Box key={lesson._id} sx={{ ml: 4, mb: 2 }}>
                       <Box display="flex" alignItems="center" mb={1} gap={2}>
                         <FieldTitle
                           title="Tên bài học"
@@ -392,7 +392,7 @@ export const AddCourse = () => {
                           variant="outlined"
                           value={lesson.name}
                           onChange={(e) =>
-                            handleLessonNameChange(chapter.id, lesson.id, e.target.value)
+                            handleLessonNameChange(chapter._id, lesson._id, e.target.value)
                           }
                           size="small"
                           placeholder="Nhập tên bài học..."
@@ -401,7 +401,7 @@ export const AddCourse = () => {
 
                         <Button
                           color="error"
-                          onClick={() => handleDeleteLesson(chapter.id, lesson.id)}
+                          onClick={() => handleDeleteLesson(chapter._id, lesson._id)}
                           sx={{ ml: 1 }}
                         >
                           <DeleteIcon />
@@ -414,11 +414,11 @@ export const AddCourse = () => {
                             <input
                               type="file"
                               accept="video/*"
-                              onChange={(e) => handleVideoUpload(chapter.id, lesson.id, e)}
+                              onChange={(e) => handleVideoUpload(chapter._id, lesson._id, e)}
                               style={{ display: 'none' }}
-                              id={`video-upload-${lesson.id}`}
+                              id={`video-upload-${lesson._id}`}
                             />
-                            <label htmlFor={`video-upload-${lesson.id}`}>
+                            <label htmlFor={`video-upload-${lesson._id}`}>
                               <LoadingButton
                                 variant="outlined"
                                 color="info"
@@ -435,14 +435,14 @@ export const AddCourse = () => {
                             <Button
                               variant="outlined"
                               color="error"
-                              onClick={() => handleDeleteVideo(chapter.id, lesson.id)}
+                              onClick={() => handleDeleteVideo(chapter._id, lesson._id)}
                               startIcon={<DeleteIcon />}
                             >
                               Xóa Video
                             </Button>
                             <Box mt={2}>
                               <video
-                                width="100%"
+                                width="70%"
                                 controls
                                 controlsList="noplaybackrate nofullscreen nodownload"
                                 disablePictureInPicture
@@ -460,7 +460,7 @@ export const AddCourse = () => {
                   <Button
                     variant="text"
                     color="warning"
-                    onClick={() => handleAddLesson(chapter.id)}
+                    onClick={() => handleAddLesson(chapter._id)}
                     startIcon={<Iconify icon="mdi:plus" />}
                     sx={{ ml: 4, mt: 1 }}
                   >
@@ -515,7 +515,7 @@ export const AddCourse = () => {
                 setValue={setValue}
                 getValues={getValues}
                 imageUrl={getValues('image_course')}
-                state={null}
+                state={'add'}
               />
             </Grid>
 

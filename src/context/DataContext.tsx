@@ -1,19 +1,10 @@
 import { createContext, useContext } from 'react';
-
-type UserProps = {
-  full_name: string;
-  username: string;
-  email: string;
-  phone_number: string;
-  address: string;
-  role: string;
-  total_courses: string;
-  total_prices: string;
-};
+import { TUserProfile } from '../core/types.ts';
+import { KeyedMutator } from 'swr';
 
 interface DataContextType {
-  data: UserProps;
-  mutate: () => Promise<void>;
+  data: TUserProfile | undefined; // Allow undefined for compatibility
+  mutate: KeyedMutator<TUserProfile>; // Use the correct type for mutate
 }
 
 export const DataContext = createContext<DataContextType | undefined>(undefined);

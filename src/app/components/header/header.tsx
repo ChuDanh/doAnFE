@@ -16,8 +16,10 @@ import Iconify from '../../../shared/components/iconify';
 import { Search } from '../search/search.tsx';
 import { useSnackbar } from 'notistack';
 import { useData } from '../../../context/DataContext.tsx';
+import { useNavigate } from 'react-router-dom';
 
 export const Header = () => {
+  const router = useNavigate();
   const { data, mutate } = useData();
   const { enqueueSnackbar } = useSnackbar();
 
@@ -49,6 +51,7 @@ export const Header = () => {
     try {
       localStorage.removeItem('accessToken');
       await mutate();
+      router('/courses');
     } catch (error: any) {
       enqueueSnackbar(error.response.data.message, { variant: 'error' });
     }
@@ -126,7 +129,11 @@ export const Header = () => {
                 </Box>
 
                 <Box sx={{ p: 2, borderBottom: '1px solid #e8ebed' }}>
-                  <Link href="/public" underline="none">
+                  <Link
+                    underline="none"
+                    onClick={() => router('/my-profile')}
+                    sx={{ cursor: 'pointer' }}
+                  >
                     <Typography
                       color="textSecondary"
                       fontSize={14}
@@ -141,21 +148,21 @@ export const Header = () => {
                   </Link>
                 </Box>
 
-                <Box sx={{ p: 2, borderBottom: '1px solid #e8ebed' }}>
-                  <Link href="/public" underline="none">
-                    <Typography
-                      color="textSecondary"
-                      fontSize={14}
-                      sx={{
-                        '&:hover': {
-                          color: 'text.primary',
-                        },
-                      }}
-                    >
-                      Khóa học của tôi
-                    </Typography>
-                  </Link>
-                </Box>
+                {/*<Box sx={{ p: 2, borderBottom: '1px solid #e8ebed' }}>*/}
+                {/*  <Link href="/public" underline="none">*/}
+                {/*    <Typography*/}
+                {/*      color="textSecondary"*/}
+                {/*      fontSize={14}*/}
+                {/*      sx={{*/}
+                {/*        '&:hover': {*/}
+                {/*          color: 'text.primary',*/}
+                {/*        },*/}
+                {/*      }}*/}
+                {/*    >*/}
+                {/*      Khóa học của tôi*/}
+                {/*    </Typography>*/}
+                {/*  </Link>*/}
+                {/*</Box>*/}
 
                 <Box sx={{ p: 2 }}>
                   <Link underline="none">

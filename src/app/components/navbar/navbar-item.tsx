@@ -1,8 +1,9 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
 import { Box, Popover, Typography } from '@mui/material';
 import { Link, useLocation } from 'react-router-dom';
 import Iconify from '../../../shared/components/iconify';
 import { TNavItem } from './types.ts';
+import { DataContext } from '../../../context/DataContext.tsx';
 
 type NavItemProps = {
   item: TNavItem;
@@ -121,6 +122,8 @@ const RenderNavItems = ({ items, handleCloseAll, location }: RenderNavItemsProps
 };
 
 export const NavItem = ({ item, isLast = false }: NavItemProps) => {
+  const { data } = useContext(DataContext) || {};
+
   const location = useLocation();
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const hasChildren = Boolean(item.children && item.children.length > 0);
@@ -149,6 +152,12 @@ export const NavItem = ({ item, isLast = false }: NavItemProps) => {
     };
   }, [handleCloseAll]);
 
+  const userRole = data?.role || 'guest';
+
+  // Filter items based on roles
+  if (item.roles && !item.roles.includes(userRole)) {
+    return null; // Do not render if the role is not allowed
+  }
   return (
     <Box
       sx={{

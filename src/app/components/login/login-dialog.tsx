@@ -20,6 +20,7 @@ import { useLoginValidation } from './validation.ts';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useSnackbar } from 'notistack';
 import { WhoAmI } from '../../../core/who-am-i/who-am-i.ts';
+import { useNavigate } from 'react-router-dom';
 
 type Props = {
   open: boolean;
@@ -34,6 +35,7 @@ type LoginProps = {
 
 export const LoginDialog = ({ open, onClose, onSwitchToRegister }: Props) => {
   const { enqueueSnackbar } = useSnackbar();
+  const navigate = useNavigate(); // Add useNavigate hook
 
   const { mutate } = WhoAmI();
   const defaultValues = useMemo(
@@ -65,6 +67,14 @@ export const LoginDialog = ({ open, onClose, onSwitchToRegister }: Props) => {
       // onLoggedIn(logApi.data.accessToken);
       enqueueSnackbar('Đăng nhập thành công', { variant: 'success' });
       await mutate();
+
+      const userRole = logApi.data.role;
+      if (userRole === 'user') {
+        navigate('/courses');
+      } else if (userRole === 'seller' || userRole === 'admin') {
+        navigate('/manage/courses/list');
+      }
+
       onClose();
     } catch (error: any) {
       enqueueSnackbar(error.response.data.message, { variant: 'error' });

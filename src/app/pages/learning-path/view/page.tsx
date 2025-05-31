@@ -1,25 +1,11 @@
-import { Box, Button, Card, CardContent, Grid, Typography } from '@mui/material';
+import { Box, Button, Card, CardContent, Grid, Skeleton, Stack, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-
-const learningPaths = [
-  {
-    id: 1,
-    title: 'Lộ trình học Front-end',
-    description:
-      'Lập trình viên Front-end là người xây dựng ra giao diện websites. Trong phần này F8 sẽ chia sẻ cho bạn lộ trình để trở thành lập trình viên Front-end nhé.',
-    url_img: '/AI_development-roadmap.jpg',
-  },
-  {
-    id: 2,
-    title: 'Lộ trình học Back-end',
-    description:
-      'Trái với Front-end thì lập trình viên Back-end là người làm việc với dữ liệu, công việc thường nặng tính logic hơn. Chúng ta sẽ cùng tìm hiểu thêm về lộ trình học Back-end nhé.',
-    url_img: '/AI_development-roadmap.jpg',
-  },
-];
+import { useGetListLearningPath } from '../../../../core/learning-path/use-get-list-learning-path.ts';
 
 export const LearningPath = () => {
   const router = useNavigate();
+
+  const { data } = useGetListLearningPath();
 
   return (
     <Box px={{ xs: 2, md: 4 }} py={6}>
@@ -31,27 +17,38 @@ export const LearningPath = () => {
         làm với vị trí "Lập trình viên Front-end" bạn nên tập trung vào lộ trình "Front-end".
       </Typography>
 
-      <Grid container spacing={3} sx={{ mt: 8 }}>
-        {learningPaths.map((path, index) => (
-          <Grid size={{ xs: 12, md: 6 }} key={index}>
-            <CustomCard
-              title={path.title}
-              description={path.description}
-              onClick={() => router(`/learning-path/${path.id}`)}
-            />
+      {data ? (
+        <Grid container spacing={3} sx={{ mt: 8 }} justifyContent="center">
+          {data.map((path, index) => (
+            <Grid size={{ xs: 12, md: 4 }} key={index}>
+              <CustomCard title={path.name} onClick={() => router(`/learning-path/${path._id}`)} />
+            </Grid>
+          ))}
+        </Grid>
+      ) : (
+        <Grid container spacing={3} sx={{ mt: 8 }}>
+          <Grid size={{ xs: 12, md: 4 }}>
+            <Skeleton variant="rectangular" height={80} sx={{ width: '100%' }} />
           </Grid>
-        ))}
-      </Grid>
+
+          <Grid size={{ xs: 12, md: 4 }}>
+            <Skeleton variant="rectangular" height={80} sx={{ width: '100%' }} />
+          </Grid>
+
+          <Grid size={{ xs: 12, md: 4 }}>
+            <Skeleton variant="rectangular" height={80} sx={{ width: '100%' }} />
+          </Grid>
+        </Grid>
+      )}
     </Box>
   );
 };
 
 type Props = {
   title: string;
-  description: string;
   onClick: () => void;
 };
-const CustomCard = ({ title, description, onClick }: Props) => {
+const CustomCard = ({ title, onClick }: Props) => {
   return (
     <Card
       elevation={4}
@@ -68,34 +65,21 @@ const CustomCard = ({ title, description, onClick }: Props) => {
           p: 3,
         }}
       >
-        <Typography variant="h5" fontWeight="bold" gutterBottom>
-          {title}
-        </Typography>
+        <Stack direction="row" spacing={2} alignItems="center" justifyContent="space-between">
+          <Typography fontWeight="bold" gutterBottom fontSize={20}>
+            {title}
+          </Typography>
 
-        <Typography
-          variant="body2"
-          color="text.secondary"
-          sx={{
-            display: '-webkit-box', // tạo 1 container flexbox, cần thiết cho WebkitLineClamp
-            overflow: 'hidden',
-            textOverflow: 'ellipsis', // hiển thị ...
-            WebkitBoxOrient: 'vertical', // định hướng theo chiều dọc
-            WebkitLineClamp: 2, // giới hạn số dòng hiển thị
-          }}
-        >
-          {description}
-        </Typography>
-
-        <Box
-          sx={{
-            mt: 'auto',
-            pt: 2,
-          }}
-        >
-          <Button variant="contained" size="medium" onClick={onClick}>
-            Xem chi tiết
-          </Button>
-        </Box>
+          <Box
+            sx={{
+              mt: 'auto',
+            }}
+          >
+            <Button variant="text" size="small" onClick={onClick}>
+              <Typography fontSize={13}>Xem chi tiết</Typography>
+            </Button>
+          </Box>
+        </Stack>
       </CardContent>
     </Card>
   );

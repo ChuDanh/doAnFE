@@ -6,6 +6,8 @@ import {
   Grid,
   IconButton,
   Link,
+  MenuItem,
+  Select,
   Stack,
   TextField,
   Typography,
@@ -19,6 +21,8 @@ import axios from 'axios';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useRegisterValidation } from './validation.ts';
 import { useSnackbar } from 'notistack';
+import { useNavigate } from 'react-router-dom';
+import { WhoAmI } from '../../../core/who-am-i/who-am-i.ts';
 
 type Props = {
   open: boolean;
@@ -38,6 +42,8 @@ type FormData = {
 
 export const RegisterDialog = ({ open, onClose, onSwitchToLogin }: Props) => {
   const { enqueueSnackbar } = useSnackbar();
+  const router = useNavigate(); // Add useNavigate hook
+  const { mutate } = WhoAmI();
 
   const defaultValues = useMemo(
     () => ({
@@ -47,7 +53,7 @@ export const RegisterDialog = ({ open, onClose, onSwitchToLogin }: Props) => {
       confirm_password: '',
       email: '',
       phone_number: '',
-      role: 'user',
+      role: '',
     }),
     []
   );
@@ -70,7 +76,20 @@ export const RegisterDialog = ({ open, onClose, onSwitchToLogin }: Props) => {
     try {
       await axios.post('http://localhost:3001/v1/auth/register', data);
       enqueueSnackbar('Tạo tài khoản thành công', { variant: 'success' });
-      onSwitchToLogin();
+
+      const loginResponse = await axios.post('http://localhost:3001/v1/auth/login', {
+        username: data.username,
+        password: data.password,
+      });
+      localStorage.setItem('accessToken', loginResponse.data.accessToken);
+      const userRole = loginResponse.data.role;
+      if (userRole === 'user') {
+        router('/courses');
+      } else if (userRole === 'seller' || userRole === 'admin') {
+        router('/manage/courses/list');
+      }
+      await mutate();
+      onClose();
     } catch (error: any) {
       enqueueSnackbar(error.response.data.message, { variant: 'error' });
     }
@@ -95,7 +114,7 @@ export const RegisterDialog = ({ open, onClose, onSwitchToLogin }: Props) => {
       </Stack>
       <DialogTitle sx={{ pb: 1 }} textAlign="center">
         <img src="/logo.png" height={60} style={{ borderRadius: 10 }} />
-        <Typography fontWeight={600} fontSize={20}>
+        <Typography fontWeight={600} fontSize={30}>
           Đăng ký
         </Typography>
       </DialogTitle>
@@ -175,6 +194,17 @@ export const RegisterDialog = ({ open, onClose, onSwitchToLogin }: Props) => {
                   error={!!errors.phone_number}
                   helperText={errors.phone_number?.message}
                 />
+              </Grid>
+
+              <Grid size={12}>
+                <FieldTitle title="Mục tiêu cá nhân" required />
+                <Select {...register('role')} fullWidth size="small" defaultValue="">
+                  <MenuItem value="" disabled>
+                    Chọn mục tiêu
+                  </MenuItem>
+                  <MenuItem value="user">Phục vụ học hành...</MenuItem>
+                  <MenuItem value="seller">Phục vụ nhu cầu kinh doanh...</MenuItem>
+                </Select>
               </Grid>
             </Grid>
             <Stack

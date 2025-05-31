@@ -23,23 +23,40 @@ import LayersIcon from '@mui/icons-material/Layers';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import { useGetCourseById } from '../../../../core/courses/use-get-course-by-id.ts';
 import { ELevel } from '../../../../core/types.ts';
+import { formatDuration } from '../../../../shared/utils.ts';
+import { useSnackbar } from 'notistack';
+import { useGetLearningCourseById } from '../../../../core/learning-course/use-get-learning-course-by-id.ts';
 
 export const CourseDetail = () => {
   const params = useParams();
+  const { enqueueSnackbar } = useSnackbar();
+
   const { id } = params;
 
   const { data } = useGetCourseById({ _id: id || undefined });
 
+  const { data: learningCourseData, mutate } = useGetLearningCourseById(id || '');
+
   const router = useNavigate();
 
-  const formatDuration = (duration: number): string => {
-    const hours = Math.floor(duration / 3600);
-    const minutes = Math.floor((duration % 3600) / 60);
-    const seconds = Math.floor(duration % 60);
-
-    return [hours, minutes, seconds].map((unit) => String(unit).padStart(2, '0')).join(':');
+  const handleGetLearningCourse = async (id: string) => {
+    try {
+      await fetch('http://localhost:3001/v1/learning_course/add', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+        },
+        body: JSON.stringify({
+          course: id,
+        }),
+      });
+      await mutate(); // Wait for mutate to complete
+      router(`/course/learning/${id}`);
+    } catch (e: any) {
+      enqueueSnackbar(e.message, { variant: 'error' });
+    }
   };
-
   return (
     <Box p={4}>
       {data ? (
@@ -137,11 +154,16 @@ export const CourseDetail = () => {
                 justifyContent="center"
                 alignItems="center"
               >
-                <img src={data.image_course} height={180} />
+                <img src={data.image_course} height={180} style={{ borderRadius: 10 }} />
               </Box>
               <CardContent>
                 <Typography variant="h5" color="error" fontWeight={600} textAlign="center">
-                  Miễn phí
+                  {data.price === 0
+                    ? 'Miễn phí'
+                    : `${new Intl.NumberFormat('vi-VN', {
+                        style: 'currency',
+                        currency: 'VND',
+                      }).format(data.price)}`}{' '}
                 </Typography>
                 <List dense>
                   <ListItem>
@@ -165,15 +187,27 @@ export const CourseDetail = () => {
                   </ListItem>
                 </List>
 
-                {data.price === 0 ? (
+                {id && learningCourseData && learningCourseData.isLearning ? (
                   <Box display="flex" justifyContent="center" my={2}>
                     <Button
                       variant="contained"
                       size="large"
-                      onClick={() => router(`/course/learning`)}
+                      onClick={() => router(`/course/learning/${id}`)}
+                      color="warning"
+                    >
+                      Tiếp tục học
+                    </Button>
+                  </Box>
+                ) : id &&
+                  (data.price === 0 || (learningCourseData && learningCourseData.is_paid)) ? (
+                  <Box display="flex" justifyContent="center" my={2}>
+                    <Button
+                      variant="contained"
+                      size="large"
+                      onClick={() => handleGetLearningCourse(id)}
                       color={'success'}
                     >
-                      Vào học
+                      Bắt đầu học
                     </Button>
                   </Box>
                 ) : (

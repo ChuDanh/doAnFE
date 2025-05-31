@@ -1,4 +1,4 @@
-import { Box, Button, CardMedia, Link, Stack, Tooltip, Typography } from '@mui/material';
+import { Box, Button, CardMedia, Chip, Link, Stack, Tooltip, Typography } from '@mui/material';
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import Iconify from '../../../../../shared/components/iconify/iconify';
 import { styleDataGrid } from '../../../../../shared/styles/data-grid-styles.ts';
@@ -7,18 +7,40 @@ import { DeleteCourseConfirm } from '../../../../../shared/components/dialog/cou
 import { useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
 import { useGetCourseByAccount } from '../../../../../core/courses/use-get-course-by-account.ts';
+import { useSnackbar } from 'notistack';
 
 export const ManageCoursesList = () => {
-  const { data } = useGetCourseByAccount();
+  const { data, mutate } = useGetCourseByAccount();
+  const { enqueueSnackbar } = useSnackbar();
 
   const paginationModel = { page: 0, pageSize: 10 };
 
   const router = useNavigate();
 
+  const [getId, setGetId] = useState<string | null>(null);
   const [deleteCourse, setDeleteCourse] = useState(false);
 
-  const handleDeleteCourse = () => {
+  const handleDeleteConfirm = (id: string) => {
+    setGetId(id);
     setDeleteCourse(true);
+  };
+
+  const handleDeleteCourse = async (id: string) => {
+    try {
+      await fetch(`http://localhost:3001/v1/course/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+        },
+      });
+      await mutate();
+      setGetId(null);
+      setDeleteCourse(false);
+      enqueueSnackbar('Xóa khóa học thành công', { variant: 'success' });
+    } catch (e: any) {
+      enqueueSnackbar(e.message, { variant: 'error' });
+    }
   };
 
   const columns: GridColDef[] = [
@@ -68,9 +90,24 @@ export const ManageCoursesList = () => {
       ),
     },
     {
+      field: 'level',
+      headerName: 'Cấp độ',
+      width: 150,
+      sortable: false,
+      renderCell: (params: GridRenderCellParams) => {
+        const level = params.value as string;
+        return (
+          <Chip
+            label={level === 'basic' ? 'Cơ bản' : 'Nâng cao'}
+            color={level === 'basic' ? 'success' : 'error'}
+          />
+        );
+      },
+    },
+    {
       field: 'createdAt',
       headerName: 'Ngày tạo',
-      width: 300,
+      width: 200,
       sortable: true,
       renderCell: (params: GridRenderCellParams) => (
         <Typography fontSize={15}>{format(new Date(params.value), 'dd/MM/yyyy')}</Typography>
@@ -109,7 +146,12 @@ export const ManageCoursesList = () => {
           </Tooltip>
 
           <Tooltip title={'Xóa'} placement="top" arrow>
-            <Button variant="contained" color="error" size="small" onClick={handleDeleteCourse}>
+            <Button
+              variant="contained"
+              color="error"
+              size="small"
+              onClick={() => handleDeleteConfirm(params.row.id)}
+            >
               <Iconify icon="eva:trash-2-outline" width={25} height={25} />
             </Button>
           </Tooltip>
@@ -126,6 +168,7 @@ export const ManageCoursesList = () => {
         image_course: course.image_course,
         createdAt: course.createdAt,
         price: course.price,
+        level: course.level,
       })) || [],
     [data]
   );
@@ -175,7 +218,7 @@ export const ManageCoursesList = () => {
         <DeleteCourseConfirm
           open={deleteCourse}
           onClose={() => setDeleteCourse(false)}
-          onDelete={() => console.log('deleted course')}
+          onDelete={() => handleDeleteCourse(getId || '')}
         />
       )}
     </Box>
